@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../app/app_injection.dart';
 import 'app_cubit/app_cubit.dart';
+import 'team_page.dart';
 
 class AppPage extends StatelessWidget {
   const AppPage({super.key});
@@ -37,7 +38,19 @@ class AppPage extends StatelessWidget {
                       onChanged: sL<AppCubit>().updateLocalServoAngleFromField,
                     ),
                     const SizedBox(height: 20),
-                    const SendDataButton(),
+                    CustomButton(
+                      onPressed: () async =>
+                          await sL<AppCubit>().updateRemoteServoAngle(),
+                      child: const Text('Set Angle'),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomButton(
+                      onPressed: () => Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return const TeamPage();
+                      })),
+                      child: const Text('Team Page'),
+                    ),
                   ],
                 ),
               ),
@@ -74,16 +87,17 @@ class CustomSlider extends StatelessWidget {
   }
 }
 
-class SendDataButton extends StatelessWidget {
-  const SendDataButton({super.key});
-
+class CustomButton extends StatelessWidget {
+  const CustomButton({super.key, this.onPressed, required this.child});
+  final void Function()? onPressed;
+  final Widget child;
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: ElevatedButton(
-        onPressed: () async => await sL<AppCubit>().updateRemoteServoAngle(),
-        child: const Text('Set Angle'),
+        onPressed: onPressed,
+        child: child,
       ),
     );
   }
